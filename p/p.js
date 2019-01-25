@@ -19,11 +19,15 @@ Random.prototype.Next = function (limit) {
     return Math.floor((Math.random() * limit));
 }
 
+var changeWordTimeout;
 var changeWord = function() {
     $('body > div > span')
-        .text(words[random.Next(words.length)])
-    ;
-    setTimeout(function() { changeWord(); }, 4000);
+        .text(words[random.Next(words.length)]);
+    changeWordTimeout = setTimeout(function() { changeWord(); }, 4000);
+}
+
+function stopChangeWord() {
+    clearTimeout(changeWordTimeout);
 }
 
 // ref: https://namingschemes.com/Penis_Synonyms
@@ -230,8 +234,22 @@ var words = [
 ]
 var random = new Random();
 
+function ehandler(event) {
+    if (event.keyCode == 8 || event.type == 'tap') {
+        console.log('Backspace was pressed');
+        stopChangeWord();
+        event.preventDefault();
+    }
+    else if (event.keyCode == 37 || event.type == 'swipeleft') {
+        console.log('Left was pressed');
+        event.preventDefault();
+    }
+}
+
 $(document).ready(function () {
     changeWord();
+    $(document).on('keydown', ehandler);
+    $(document).on('tap swipeleft', ehandler);
 });
 
 //}
