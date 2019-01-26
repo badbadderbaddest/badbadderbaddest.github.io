@@ -18,16 +18,17 @@ function Random() {
 Random.prototype.Next = function (limit) {
     return Math.floor((Math.random() * limit));
 }
-
-var changeWordTimeout;
-var changeWord = function() {
-    $('body > div > span')
-        .text(words[random.Next(words.length)]);
-    changeWordTimeout = setTimeout(function() { changeWord(); }, 4000);
-}
-
-function stopChangeWord() {
-    clearTimeout(changeWordTimeout);
+var rng = new Random();
+Random.prototype.Shuffle = function (a) {
+    var shuffled = [];
+    for (var i = a.length - 1; i >= 0; i--) {
+        var next = rng.Next(i + 1);
+        shuffled.push(a[next]);
+        var t = a[next];
+        a[next] = a[i];
+        a[i] = t;
+    }
+    return shuffled;
 }
 
 // ref: https://namingschemes.com/Penis_Synonyms
@@ -232,7 +233,23 @@ var words = [
     'Yogurt Hose',
     '$5 Footlong',
 ]
-var random = new Random();
+
+var changeWordTimeout;
+var iwords = 0;
+var changeWord = function() {
+    if (iwords % words.length == 0) {
+        rng.Shuffle(words);
+        iwords = 0;
+    }
+    $('body > div > span')
+        .text(words[iwords]);
+    iwords++;
+    changeWordTimeout = setTimeout(function() { changeWord(); }, 4000);
+}
+
+function stopChangeWord() {
+    clearTimeout(changeWordTimeout);
+}
 
 function ehandler(event) {
     if (event.keyCode == 8 || event.type == 'tap') {

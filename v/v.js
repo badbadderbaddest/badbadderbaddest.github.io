@@ -18,12 +18,17 @@ function Random() {
 Random.prototype.Next = function (limit) {
     return Math.floor((Math.random() * limit));
 }
-
-var changeWord = function() {
-    $('body > div > span')
-        .text(words[random.Next(words.length)])
-    ;
-    setTimeout(function() { changeWord(); }, 4000);
+var rng = new Random();
+Random.prototype.Shuffle = function (a) {
+    var shuffled = [];
+    for (var i = a.length - 1; i >= 0; i--) {
+        var next = rng.Next(i + 1);
+        shuffled.push(a[next]);
+        var t = a[next];
+        a[next] = a[i];
+        a[i] = t;
+    }
+    return shuffled;
 }
 
 // ref: https://namingschemes.com/Vagina_Synonyms
@@ -202,7 +207,18 @@ var words = [
     "Yoni",
     "Ziggy",
 ]
-var random = new Random();
+
+var iwords = 0;
+var changeWord = function() {
+    if (iwords % words.length == 0) {
+        rng.Shuffle(words);
+        iwords = 0;
+    }
+    $('body > div > span')
+        .text(words[iwords]);
+    iwords++;
+    setTimeout(function() { changeWord(); }, 4000);
+}
 
 $(document).ready(function () {
     changeWord();
