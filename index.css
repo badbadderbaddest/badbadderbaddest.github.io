@@ -27,10 +27,15 @@ div {
 }
 
 div a {
-    margin-right: 10%;
+    margin-right: 5%;
 }
 div a:last-child {
     margin-right: 0;
+}
+
+p {
+    margin-left: 5%;
+    margin-right: 5%;
 }
 
 body {
